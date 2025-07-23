@@ -25,9 +25,9 @@ public class ATM {
     }
 
     public Account authenticateUser(int accNo, int pin){
-        for(int i=0; i<accounts.size(); i++){
-            if(accounts.get(i).getAccountNo() == accNo && accounts.get(i).getPin()==pin) {
-                return accounts.get(i);
+        for (Account account : accounts) {
+            if (account.getAccountNo() == accNo && account.getPin() == pin) {
+                return account;
             }
         }
         return null;
@@ -38,7 +38,8 @@ public class ATM {
         System.out.println("1. Withdraw");
         System.out.println("2. Deposit");
         System.out.println("3. Check Balance");
-        System.out.println("4. Exit");
+        System.out.println("4. Pin Change");
+        System.out.println("5. Exit");
     }
 
     public void performOperations(){
@@ -69,9 +70,16 @@ public class ATM {
                     double amount;
                     System.out.println("Enter amount to withdraw..!");
                     amount = scanner.nextDouble();
+
                     if(currentAcc.withdraw(amount)){
-                        System.out.println("Transaction Successful, Remaining balance: $"+currentAcc.getBalance());
-                    }else {
+                        System.out.println("Enter your pin");
+                        pin = scanner.nextInt();
+                        if(currentAcc.getPin()==pin){
+                            System.out.println("Transaction Successful, Remaining balance: $"+currentAcc.getBalance());
+                        }else {
+                            System.out.println("Incorrect Pin....Try Again...!");
+                        }
+                    }else{
                         System.out.println("Insufficient Balance");
                     }
                     break;
@@ -85,10 +93,30 @@ public class ATM {
                     break;
                 }
                 case 3:{
-                    System.out.println("Current Balance is : $"+currentAcc.getBalance());
+                    System.out.println("Enter your pin...!");
+                    pin = scanner.nextInt();
+                    if(currentAcc.getPin()==pin)
+                        System.out.println("Current Balance is : $"+currentAcc.getBalance());
+                    else{
+                        System.out.println("Incorrect pin...!");
+                    }
                     break;
                 }
-                case 4:{
+                case 4: {
+                    System.out.println("Enter your old pin");
+                    pin = scanner.nextInt();
+                    if(currentAcc.getPin()==pin){
+                        System.out.println("Enter your new pin....!");
+                        pin = scanner.nextInt();
+                        currentAcc.setPin(pin);
+                        System.out.println("Your new pin is: "+currentAcc.getPin());
+                    }else{
+                        System.out.println("Incorrect pin");
+                    }
+                    //currentAcc = authenticateUser(accNo, pin);
+                    break;
+                }
+                case 5:{
                     System.out.println("Thanks for choosing "+bankname+" ATM ");
                     break;
                 }
@@ -97,6 +125,6 @@ public class ATM {
                     break;
                 }
             }
-        }while (choice != 4);
+        }while (choice != 5);
     }
 }
