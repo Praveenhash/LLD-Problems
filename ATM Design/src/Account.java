@@ -32,4 +32,8 @@ public class Account {
     public void deposit(double amount){
         balance += amount;
     }
+
+    public void setPin(int pin){
+        this.pin = pin;
+    }
 }
