@@ -24,7 +24,9 @@ public class ATM {
         accounts.add(account);
     }
 
+
     public Account authenticateUser(int accNo, int pin){
+
         for (Account account : accounts) {
             if (account.getAccountNo() == accNo && account.getPin() == pin) {
                 return account;
@@ -47,37 +49,45 @@ public class ATM {
         int accNo, pin;
         Account currentAcc = null;
         Scanner scanner = new Scanner(System.in);
-        do{
-            System.out.println("Enter account no....!");
+        int count = 3;
+        // If user enters Incorrect 3 time account gets blocked
+        while (count > 0) {
+            System.out.println("Enter account no:");
             accNo = scanner.nextInt();
-            System.out.println("Enter the pin");
+            System.out.println("Enter PIN:");
             pin = scanner.nextInt();
 
             currentAcc = authenticateUser(accNo, pin);
 
-            if(currentAcc == null){
-                System.out.println("Invalid credentials, Please try again...!");
+            if (currentAcc != null) {
+                break; // success
+            } else {
+                count--;
+                if (count == 0) {
+                    System.out.println("You have reached the max limit. Your account has been blocked.");
+                    System.exit(0);
+                } else {
+                    System.out.println("Invalid credentials. You have " + count + " attempts left.");
+                }
             }
-        } while (currentAcc == null);
+        }
 
         do{
             displayMenu();
             System.out.println("Enter your choice...!");
             choice = scanner.nextInt();
-
             switch(choice){
                 case 1: {
                     double amount;
                     System.out.println("Enter amount to withdraw..!");
                     amount = scanner.nextDouble();
-
                     if(currentAcc.withdraw(amount)){
                         System.out.println("Enter your pin");
                         pin = scanner.nextInt();
                         if(currentAcc.getPin()==pin){
-                            System.out.println("Transaction Successful, Remaining balance: $"+currentAcc.getBalance());
+                            System.out.println("Transaction Successful, Remaining Balance: $"+currentAcc.getBalance());
                         }else {
-                            System.out.println("Incorrect Pin....Try Again...!");
+                            System.out.println("Invalid Pin");
                         }
                     }else{
                         System.out.println("Insufficient Balance");
@@ -88,8 +98,14 @@ public class ATM {
                     double amount;
                     System.out.println("Enter amount to deposit");
                     amount = scanner.nextDouble();
-                    currentAcc.deposit(amount);
-                    System.out.println("The total available balance is $"+currentAcc.getBalance());
+                    System.out.println("Enter your pin number to deposit");
+                    pin = scanner.nextInt();
+                    if(currentAcc.getPin() == pin) {
+                        currentAcc.deposit(amount);
+                        System.out.println("The total available balance is $"+currentAcc.getBalance());
+                    }else{
+                        System.out.println("Invalid pin number....Try again...!");
+                    }
                     break;
                 }
                 case 3:{
